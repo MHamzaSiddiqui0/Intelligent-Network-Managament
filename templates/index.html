@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Network Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>🌐 Intelligent Network Management</h1>
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                <span>System Online</span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Log Summaries Panel -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📊 Log Summaries</h2>
+                <div class="card-actions">
+                    <button class="btn btn-secondary" id="refresh-summaries" title="Refresh">
+                        🔄
+                    </button>
+                </div>
+            </div>
+            <div id="summaries-list">
+                <div class="empty-state">Loading summaries...</div>
+            </div>
+        </div>
+
+        <!-- Alerts Dashboard -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">🚨 Alert Dashboard</h2>
+                <div class="card-actions">
+                    <button class="btn btn-secondary" id="refresh-alerts" title="Refresh">
+                        🔄
+                    </button>
+                </div>
+            </div>
+            <div id="alerts-list">
+                <div class="empty-state">Loading alerts...</div>
+            </div>
+        </div>
+
+        <!-- ChatOps Interface -->
+        <div class="card" style="grid-column: span 2;">
+            <div class="card-header">
+                <h2 class="card-title">💬 ChatOps Assistant</h2>
+                <div class="card-actions">
+                    <button class="btn btn-secondary" onclick="addChatMessage('help', 'user'); sendChatMessage();" title="Show Help">
+                        ❓ Help
+                    </button>
+                </div>
+            </div>
+            <div id="chat-container">
+                <div id="chat-messages">
+                    <div class="empty-state">Type a command to get started. Try "help" or "status"</div>
+                </div>
+                <div id="chat-input-container">
+                    <input 
+                        type="text" 
+                        id="chat-input" 
+                        placeholder="Type a command... (e.g., status, alerts, logs, help)"
+                        autocomplete="off"
+                    >
+                    <button class="btn btn-primary" id="send-chat">
+                        Send 📤
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
