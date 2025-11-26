@@ -119,9 +119,9 @@ cn project/
 ## Technologies
 
 - **Backend:** Python 3, Flask, SQLAlchemy
-- **Database:** SQLite (easily switchable to MySQL)
-- **Frontend:** HTML5, CSS3, JavaScript (ES6+)
-- **Styling:** Custom CSS with glassmorphism and dark theme
+- **Database:** SQLite
+- **Frontend:** HTML5, CSS3, JavaScript
+- **Styling:** Custom CSS
 
 ## Course Project Notes
 
@@ -134,5 +134,3 @@ This project demonstrates:
 - Anomaly detection algorithms
 - Statistical analysis of network data
 - Command-line interface design
-
-Perfect for a Computer Networks course project showcasing network management, log analysis, and automated monitoring systems.

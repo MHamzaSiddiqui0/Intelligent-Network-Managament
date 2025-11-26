@@ -326,7 +326,30 @@ class ChatOps:
         
         host = args[0]
         
-        return f"ℹ️ Traceroute to {host} would be executed here (disabled for security)"
+        try:
+            # Platform-specific traceroute command with optimized parameters
+            if platform.system().lower() == 'windows':
+                # -h 10: max 10 hops, -w 1000: wait 1 second per hop
+                command = ['tracert', '-h', '10', '-w', '1000', host]
+            else:
+                # -m 10: max 10 hops, -w 1: wait 1 second per hop
+                command = ['traceroute', '-m', '10', '-w', '1', host]
+            
+            # Increased timeout to 60 seconds
+            result = subprocess.run(command, capture_output=True, text=True, timeout=60)
+            
+            if result.returncode == 0 or result.stdout:
+                # Truncate output if too long
+                output = result.stdout[:1500] if result.stdout else result.stderr[:1500]
+                return f"🌐 Traceroute to {host}:\n```\n{output}\n```"
+            else:
+                return f"❌ Traceroute to {host} failed\n{result.stderr[:200]}"
+        except subprocess.TimeoutExpired:
+            return f"⏱️ Traceroute to {host} timed out after 60 seconds. Try a closer host or reduce hops."
+        except FileNotFoundError:
+            return f"❌ Traceroute command not found on this system"
+        except Exception as e:
+            return f"❌ Error: {str(e)}"
     
     def _cmd_check(self, args):
         """Check service status"""

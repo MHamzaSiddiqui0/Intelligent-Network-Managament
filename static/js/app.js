@@ -19,6 +19,7 @@ function initializeApp() {
     // Set up event listeners
     document.getElementById('refresh-summaries')?.addEventListener('click', loadSummaries);
     document.getElementById('refresh-alerts')?.addEventListener('click', loadAlerts);
+    document.getElementById('generate-summary')?.addEventListener('click', generateSummary);
     document.getElementById('send-chat')?.addEventListener('click', sendChatMessage);
     document.getElementById('chat-input')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') sendChatMessage();
@@ -53,7 +54,7 @@ function displaySummaries(summaries) {
     const container = document.getElementById('summaries-list');
 
     if (!summaries || summaries.length === 0) {
-        container.innerHTML = '<div class="empty-state">No log summaries available</div>';
+        container.innerHTML = '<div class="empty-state">No log summaries available. Click "Generate New" to create one.</div>';
         return;
     }
 
@@ -154,6 +155,7 @@ async function sendChatMessage() {
     }
 }
 
+
 function addChatMessage(message, type) {
     const container = document.getElementById('chat-messages');
     const messageDiv = document.createElement('div');
@@ -161,7 +163,7 @@ function addChatMessage(message, type) {
 
     const contentDiv = document.createElement('div');
     contentDiv.className = type === 'user' ? 'user-message' : 'bot-message';
-    contentDiv.textContent = message;
+    contentDiv.innerHTML = formatMessage(message);
 
     messageDiv.appendChild(contentDiv);
     container.appendChild(messageDiv);
@@ -169,6 +171,26 @@ function addChatMessage(message, type) {
     // Scroll to bottom
     container.scrollTop = container.scrollHeight;
 }
+
+function formatMessage(message) {
+    // Convert Markdown-style formatting to HTML
+    let formatted = message;
+
+    // Convert **bold** to <strong>
+    formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+    // Convert `code` to <code>
+    formatted = formatted.replace(/`(.+?)`/g, '<code>$1</code>');
+
+    // Convert newlines to <br>
+    formatted = formatted.replace(/\n/g, '<br>');
+
+    // Convert code blocks ```text``` to <pre><code>
+    formatted = formatted.replace(/```(.+?)```/gs, '<pre><code>$1</code></pre>');
+
+    return formatted;
+}
+
 
 async function loadChatHistory() {
     try {
@@ -219,6 +241,11 @@ function showError(containerId, message) {
 
 // Generate Summary
 async function generateSummary() {
+    const btn = document.getElementById('generate-summary');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '⏳ Generating...';
+    btn.disabled = true;
+
     try {
         const response = await fetch(`${API_BASE}/api/logs/summarize`, {
             method: 'POST',
@@ -227,10 +254,17 @@ async function generateSummary() {
         });
 
         if (response.ok) {
-            loadSummaries();
+            await loadSummaries();
+        } else {
+            const data = await response.json();
+            alert(data.message || 'Failed to generate summary');
         }
     } catch (error) {
         console.error('Error generating summary:', error);
+        alert('Error generating summary');
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
     }
 }
 
